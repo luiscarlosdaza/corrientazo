@@ -8,7 +8,18 @@ import java.util.List;
 
 public class RouteService {
 
-  public List<Path> getRoutes(String filename) {
+  public List<Path> getDronPath(File dronPath) {
+    List<Path> paths = new ArrayList<>();
+    try (InputStream is = new FileInputStream(dronPath)) {
+      paths = getPathsFromInputStream(is);
+    } catch (IOException e) {
+      System.out.println("There was an error reading file: " + dronPath.getName());
+      e.printStackTrace();
+    }
+    return paths;
+  }
+
+  public List<Path> getDronPath(String filename) {
     List<Path> paths = new ArrayList<>();
     ClassLoader classloader = Thread.currentThread().getContextClassLoader();
     try (InputStream is = classloader.getResourceAsStream(filename)) {
