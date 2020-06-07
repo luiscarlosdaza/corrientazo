@@ -1,57 +1,48 @@
 package com.daza.code;
 
-import com.daza.code.model.Path;
-import com.daza.code.service.RouteService;
+import com.daza.code.model.Drone;
+import com.daza.code.service.DroneService;
+import com.daza.code.service.ValidateService;
 
 import java.io.File;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+
+import static com.daza.code.util.Constant.*;
 
 public class Main {
 
-  private static final String INPUT_FOLDER = "in";
-  private static final String OUTPUT_FOLDER = "out";
-  private static RouteService routeService = new RouteService();
+  private DroneService droneService;
+  private ValidateService validateService;
 
-  public static void main(String[] args) {
-
-    //Read files from resources
-    File[] inputFiles = getInputFiles(INPUT_FOLDER);
-
-    //Map file info into objects
-    Map<File, List<Path>> inputFilesMap = new HashMap<>();
-    for (File dronPathFile : inputFiles) {
-      List<Path> paths = routeService.getDronPath(dronPathFile);
-
-
-
-      inputFilesMap.put(dronPathFile, paths);
-    }
-
-    //Process file
-    Iterator iterator = inputFilesMap.entrySet().iterator();
-    while (iterator.hasNext()) {
-      Map.Entry entry = (Map.Entry) iterator.next();
-      File dronPathFile = (File) entry.getKey();
-      List<Path> paths = (List<Path>) entry.getValue();
-      System.out.println(dronPathFile.getName());
-      paths.stream().forEach(a -> System.out.printf("%s, ", a));
-      System.out.println();
-
-      iterator.remove(); // avoids a ConcurrentModificationException
-
-    }
-
-
-    //Generate new file
+  public Main(DroneService droneService, ValidateService validateService) {
+    this.droneService = droneService;
+    this.validateService = validateService;
   }
 
-  private static File[] getInputFiles(String folder) {
-    ClassLoader loader = Thread.currentThread().getContextClassLoader();
-    URL url = loader.getResource(folder);
-    return new File(url.getPath()).listFiles();
+  public static void main(String[] args) {
+    Main main = new Main(new DroneService(), new ValidateService());
+    main.executeDrones();
+  }
+
+  private void executeDrones() {
+    File[] inputFiles = new File(INPUT_FOLDER).listFiles(
+        (dir, name) -> name.toLowerCase().startsWith(INPUT_FILE) && name.toLowerCase().endsWith(TXT)
+    );
+    for (File inputFile : inputFiles) {
+      Drone drone = new Drone(inputFile.getName());
+      List<String> paths = droneService.getPathsFromInputFile(inputFile);
+      validateService.validateAmountOfLunches(drone, paths);
+      //Process file
+      List<String> outputPaths = new ArrayList<>();
+      for (String path : paths) {
+        for (Character droneAction : path.toCharArray()) {
+          drone.move(droneAction);
+        }
+        validateService.validateBlocks(drone);
+        outputPaths.add(drone.toString());
+      }
+      droneService.generateDroneOutputFile(drone, outputPaths);
+    }
   }
 }
