@@ -1,7 +1,5 @@
 package com.daza.code.model;
 
-import com.daza.code.exception.DroneException;
-
 public class North implements CardinalDirection {
 
   @Override

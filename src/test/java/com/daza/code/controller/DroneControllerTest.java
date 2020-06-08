@@ -23,10 +23,8 @@ public class DroneControllerTest {
   @Before
   public void init() {
     //Delete output files
-    final File[] outputFiles = new File(OUTPUT_FOLDER).listFiles();
-    Stream.of(outputFiles).forEach(file -> file.delete());
-
     helper = new Helper();
+    helper.createAndCleanOutputFolder();
     droneController = new DroneController();
     readerAndWriterService = new ReaderAndWriterService();
   }
