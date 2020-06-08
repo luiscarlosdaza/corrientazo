@@ -11,7 +11,7 @@ public class Drone {
     this.cardinalDirection = new North();
   }
 
-  public void move(Character action) {
+  public void move(DroneAction action) {
     cardinalDirection.move(this, action);
   }
 
@@ -22,9 +22,8 @@ public class Drone {
     sb.append(x);
     sb.append(", ");
     sb.append(y);
-    sb.append(", ");
+    sb.append(") dirección ");
     sb.append(cardinalDirection.getLetter());
-    sb.append(")");
     return sb.toString();
   }
 
