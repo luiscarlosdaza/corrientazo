@@ -5,25 +5,22 @@ import com.daza.code.exception.DroneException;
 public class North implements CardinalDirection {
 
   @Override
-  public void move(Drone drone, Character action) {
+  public void move(Drone drone, DroneAction action) {
     switch (action) {
-      case 'A':
+      case A:
         drone.setY(drone.getY() + 1);
         break;
-      case 'I':
+      case I:
         drone.setCardinalDirection(new West());
         break;
-      case 'D':
+      case D:
         drone.setCardinalDirection(new East());
         break;
-      default:
-        String message = String.format("Dron %s: the action %s is undefined.", drone.getName(), action);
-        throw new DroneException(message);
     }
   }
 
   @Override
-  public Character getLetter() {
-    return 'N';
+  public String getLetter() {
+    return "Norte";
   }
 }
