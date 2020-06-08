@@ -1,7 +1,7 @@
 package com.daza.code.model;
 
 public interface CardinalDirection {
-  void move(Drone drone, Character action);
+  void move(Drone drone, DroneAction action);
 
-  Character getLetter();
+  String getLetter();
 }
